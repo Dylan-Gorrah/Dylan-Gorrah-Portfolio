@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="description" content="Dylan Gorrah — Frontend Developer & Software Development Tutor based in Bloemfontein, South Africa." />
+<title>Dylan Gorrah — Frontend Developer</title>
+<link rel="icon" href="favicon.ico" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&family=Playfair+Display:wght@400;500;600&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/devicons/devicon@v2.15.1/devicon.min.css" />
+
+<style>
+/* ── Variables ─────────────────────────────────────────────────── */
+:root {
+  --bg:           #0F0F14;
+  --surface:      rgba(255,255,255,0.045);
+  --surface-h:    rgba(255,255,255,0.08);
+  --bdr:          rgba(255,255,255,0.08);
+  --bdr-h:        rgba(255,255,255,0.20);
+  --accent:       #B8860B;
+  --accent-dim:   rgba(184,134,11,0.55);
+  --accent-faint: rgba(184,134,11,0.10);
+  --highlight:    rgba(220,200,160,0.25);
+  --highlight-bdr: rgba(220,200,160,0.35);
+  --txt:          #F5F5F7;
+  --txt-dim:      rgba(245,245,247,0.65);
+  --txt-faint:    rgba(245,245,247,0.40);
+  --green:        #3B9E6C;
+  --green-bg:     rgba(59,158,108,0.10);
+  --green-bdr:    rgba(59,158,108,0.22);
+  --cold:         rgba(100,130,200,0.12);
+  --panel-bg:     rgba(7,7,10,0.98);
+  --r-in:       90px;
+  --r-out:      140px;
+  --scene:      320px;
+  --p-size:     120px;
+  --i-in:       34px;
+  --i-out:      26px;
+}
+@media(min-width:768px){
+  :root{ --r-in:112px; --r-out:170px; --scene:400px; --p-size:140px; --i-in:38px; --i-out:30px; }
+}
+@media(min-width:1024px){
+  :root{ --r-in:142px; --r-out:216px; --scene:510px; --p-size:172px; --i-in:44px; --i-out:34px; }
+}
+
+/* ── Reset ─────────────────────────────────────────────────────── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow-x:hidden}
+body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--txt);min-height:100vh}
+a{text-decoration:none;color:inherit}
+button{font-family:'Outfit',sans-serif;cursor:pointer;border:none;background:none}
+svg{display:block;flex-shrink:0}
+
+/* ── Background layers ─────────────────────────────────────────── */
+#particles{position:fixed;inset:0;z-index:0;pointer-events:none}
+.bg-grid{
+  position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:radial-gradient(circle at 1px 1px,rgba(255,255,255,0.038) 1px,transparent 0);
+  background-size:38px 38px;
+  mask-image:radial-gradient(ellipse at center,black 25%,transparent 68%);
+  -webkit-mask-image:radial-gradient(ellipse at center,black 25%,transparent 68%);
+}
+.scanlines{
+  position:fixed;inset:0;z-index:1;pointer-events:none;
+  background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,0,0,0.025) 3px,rgba(0,0,0,0.025) 4px);
+}
+.noise{
+  position:fixed;inset:-50%;width:200%;height:200%;z-index:1;pointer-events:none;opacity:0.038;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size:256px 256px;
+}
+body::after{
+  content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:radial-gradient(700px circle at var(--mx,50%) var(--my,50%),rgba(200,180,140,0.06),transparent 45%);
+}
+@media (hover:none), (pointer:coarse){
+  body::after{display:none}
+}
+
+/* ── Orbit ─────────────────────────────────────────────────────── */
+.orbit-scene{position:relative;width:var(--scene);height:var(--scene);margin:0 auto;flex-shrink:0}
+.orbit-ring{position:absolute;top:50%;left:50%;border-radius:50%;transform:translate(-50%,-50%);border:1px solid rgba(255,255,255,0.055)}
+.orbit-ring.r1{width:calc(var(--r-in)*2 + 8px);height:calc(var(--r-in)*2 + 8px);box-shadow:0 0 50px var(--cold),inset 0 0 50px var(--cold);border-color:rgba(110,148,255,0.12)}
+.orbit-ring.r2{width:calc(var(--r-out)*2 + 8px);height:calc(var(--r-out)*2 + 8px);border-color:rgba(255,255,255,0.038);box-shadow:0 0 70px rgba(110,148,255,0.04)}
+.orbit-ring.r3{width:calc(var(--r-out)*2 + 70px);height:calc(var(--r-out)*2 + 70px);border-color:rgba(255,255,255,0.016)}
+.arm{position:absolute;top:50%;left:50%;width:0;height:0}
+.arm-cw {animation:spinCW  30s linear infinite}
+.arm-ccw{animation:spinCCW 50s linear infinite}
+
+.icon-chip{
+  position:absolute;display:flex;align-items:center;justify-content:center;border-radius:8px;
+  background:rgba(10,9,15,0.96);border:1px solid rgba(255,255,255,0.082);
+  box-shadow:0 4px 28px rgba(0,0,0,0.75),inset 0 1px 0 rgba(255,255,255,0.05);
+  backdrop-filter:blur(10px);transition:border-color 0.28s,box-shadow 0.28s;cursor:pointer;
+}
+.icon-chip:hover{border-color:rgba(220,200,160,0.40);box-shadow:0 4px 28px rgba(0,0,0,0.75),0 0 18px rgba(220,200,160,0.15),inset 0 1px 0 rgba(255,255,255,0.07)}
+
+.ic-in{
+  width:var(--i-in);height:var(--i-in);
+  transform:translateX(var(--r-in)) translateY(-50%);
+  animation:counterCW 30s linear infinite;
+}
+.ic-out{
+  width:var(--i-out);height:var(--i-out);border-radius:6px;
+  background:rgba(8,7,12,0.90);border:1px solid rgba(255,255,255,0.048);opacity:0.5;
+  transform:translateX(var(--r-out)) translateY(-50%);
+  animation:counterCCW 50s linear infinite;
+}
+.ic-in i{font-size:15px;color:var(--txt-dim)}
+.ic-out i{font-size:11px;color:var(--txt-faint)}
+@media(min-width:768px){.ic-in i{font-size:18px}.ic-out i{font-size:13px}}
+@media(min-width:1024px){.ic-in i{font-size:21px}.ic-out i{font-size:15px}}
+
+.devicon-nextjs-original{filter:brightness(0) invert(0.82) sepia(1) saturate(0) hue-rotate(0deg)}
+
+@keyframes spinCW  {to{transform:rotate(360deg)}}
+@keyframes spinCCW {to{transform:rotate(-360deg)}}
+@keyframes counterCW {from{transform:translateX(var(--r-in))  translateY(-50%) rotate(0deg)}to{transform:translateX(var(--r-in))  translateY(-50%) rotate(-360deg)}}
+@keyframes counterCCW{from{transform:translateX(var(--r-out)) translateY(-50%) rotate(0deg)}to{transform:translateX(var(--r-out)) translateY(-50%) rotate(360deg)}}
+
+.scroll-hint{display:flex;align-items:center;gap:6px;color:rgba(245,245,247,0.35);font-size:11px;font-weight:500;letter-spacing:0.05em}
+.scroll-hint svg{width:14px;height:14px;stroke:currentColor;stroke-width:1.5;fill:none;animation:scrollBounce 1.5s ease-in-out infinite}
+@keyframes scrollBounce{0%,100%{transform:translateY(0)}50%{transform:translateY(3px)}}
+
+/* Profile */
+.profile{
+  position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  width:var(--p-size);height:var(--p-size);border-radius:50%;
+  background:linear-gradient(150deg,#15151C,#1E1E28);
+  border:1px solid rgba(220,200,160,0.18);
+  display:flex;align-items:center;justify-content:center;overflow:hidden;z-index:10;cursor:pointer;
+  box-shadow:0 0 0 7px rgba(220,200,160,0.03),0 0 60px rgba(220,200,160,0.08),0 0 110px rgba(100,130,200,0.06),inset 0 1px 0 rgba(255,255,255,0.07);
+  transition:box-shadow 0.4s,border-color 0.4s;
+}
+.profile:hover{box-shadow:0 0 0 12px rgba(220,200,160,0.06),0 0 80px rgba(220,200,160,0.18),0 0 130px rgba(100,130,200,0.08),inset 0 1px 0 rgba(255,255,255,0.09);border-color:rgba(220,200,160,0.35)}
+.profile img{width:100%;height:100%;object-fit:cover;object-position:center top;pointer-events:none}
+.profile-initials{font-size:32px;font-weight:500;letter-spacing:0.08em;color:rgba(220,200,160,0.85)}
+@media(min-width:1024px){.profile-initials{font-size:44px}}
+
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.28}}
+
+/* ── Hero ──────────────────────────────────────────────────────── */
+.hero{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;padding:28px 20px 22px;gap:20px;text-align:center}
+.hero-name{font-size:clamp(36px,7.5vw,56px);font-weight:500;letter-spacing:0.02em;color:var(--txt);line-height:1.08;font-family:'Playfair Display',serif}
+.hero-role{color:var(--txt-faint);font-size:11px;font-weight:500;letter-spacing:0.22em;text-transform:uppercase;margin-top:8px}
+.avail{display:inline-flex;align-items:center;gap:8px;background:var(--green-bg);border:1px solid var(--green-bdr);border-radius:20px;padding:7px 16px;margin-top:6px;font-size:11px;font-weight:500;color:var(--green);letter-spacing:0.05em}
+.avail-dot{width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 6px var(--green);flex-shrink:0;animation:pulse 2.4s ease-in-out infinite}
+
+/* ── Nav ───────────────────────────────────────────────────────── */
+.nav{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;padding:0 20px 30px;position:relative;z-index:1}
+.nav-btn{
+  display:flex;align-items:center;gap:7px;background:var(--surface);border:1px solid var(--bdr);
+  color:var(--txt-dim);padding:10px 20px;border-radius:50px;font-size:13px;font-weight:500;letter-spacing:0.04em;
+  backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);white-space:nowrap;
+  transition:background 0.22s,border-color 0.22s,color 0.22s,transform 0.22s,box-shadow 0.22s;
+}
+.nav-btn svg{width:14px;height:14px;stroke:currentColor;stroke-width:1.8;fill:none}
+.nav-btn:hover{background:var(--highlight);border-color:var(--highlight-bdr);color:var(--txt);transform:translateY(-2px);box-shadow:0 6px 24px rgba(220,200,160,0.12),0 0 0 1px rgba(220,200,160,0.10)}
+.nav-btn-quick{background:rgba(184,134,11,0.08);border-color:rgba(184,134,11,0.25);color:rgba(220,200,160,0.90)}
+.nav-btn-quick:hover{background:rgba(184,134,11,0.18);border-color:rgba(184,134,11,0.45);color:#E8D5A3;box-shadow:0 6px 24px rgba(184,134,11,0.18)}
+
+/* ── Overlay ───────────────────────────────────────────────────── */
+.overlay{
+  position:fixed;inset:0;z-index:100;background:rgba(4,4,7,0.86);
+  backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);
+  display:flex;align-items:flex-end;justify-content:center;padding:0 10px 10px;
+  opacity:0;pointer-events:none;transition:opacity 0.22s;
+}
+.overlay.open{opacity:1;pointer-events:all}
+@media(min-width:600px){.overlay{align-items:center;padding:24px}}
+
+.panel{
+  background:var(--panel-bg);border:1px solid rgba(255,255,255,0.08);border-top:1px solid rgba(220,200,160,0.12);
+  border-radius:26px 26px 0 0;width:100%;max-width:560px;max-height:85vh;
+  overflow-y:auto;padding:12px 20px 40px;
+  transform:translateY(44px);opacity:0;
+  transition:transform 0.40s cubic-bezier(0.22,1,0.36,1),opacity 0.28s;
+  scrollbar-width:thin;scrollbar-color:rgba(91,91,140,0.12) transparent;
+}
+.panel::-webkit-scrollbar{width:3px}
+.panel::-webkit-scrollbar-thumb{background:rgba(91,91,140,0.12);border-radius:2px}
+.overlay.open .panel{transform:translateY(0);opacity:1}
+@media(min-width:600px){.panel{border-radius:22px;max-height:90vh;padding:36px 38px 44px}}
+
+.drag-handle{width:34px;height:3px;border-radius:2px;background:rgba(61,41,20,0.12);margin:10px auto 22px}
+@media(min-width:600px){.drag-handle{display:none}}
+
+/* ── Panel internals ───────────────────────────────────────────── */
+.panel-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px}
+.eyebrow{font-size:10px;font-weight:600;letter-spacing:0.22em;text-transform:uppercase;color:rgba(220,200,160,0.65);margin-bottom:8px}
+.panel-title{font-size:clamp(22px,5vw,28px);font-weight:600;color:var(--txt);letter-spacing:0.01em;line-height:1.1}
+.close-btn{background:var(--surface);border:1px solid var(--bdr);color:var(--txt-faint);width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all 0.2s;position:sticky;top:0;z-index:10}
+.close-btn:hover{background:rgba(200,50,50,0.07);border-color:rgba(200,50,50,0.15);color:#c03030}
+.close-btn svg{width:13px;height:13px;stroke:currentColor;stroke-width:1.8;fill:none}
+.lead{color:var(--txt-dim);font-size:14px;line-height:1.76;margin-bottom:20px}
+.divider{height:1px;background:var(--bdr);margin:22px 0}
+.section-lbl{font-size:9.5px;font-weight:600;letter-spacing:0.22em;text-transform:uppercase;color:var(--txt-faint);margin-bottom:12px}
+.icon-pill{width:38px;height:38px;border-radius:11px;flex-shrink:0;background:rgba(220,200,160,0.08);border:1px solid rgba(220,200,160,0.15);display:flex;align-items:center;justify-content:center}
+.icon-pill svg{width:16px;height:16px;stroke:rgba(220,200,160,0.70);stroke-width:1.6;fill:none}
+
+/* ── Project cards ─────────────────────────────────────────────── */
+.project-card{background:var(--surface);border:1px solid var(--bdr);border-radius:14px;padding:16px;cursor:pointer;margin-bottom:9px;display:flex;align-items:flex-start;gap:13px;transition:background 0.22s,border-color 0.22s,transform 0.22s,box-shadow 0.22s}
+.project-card:hover{background:var(--surface-h);border-color:rgba(220,200,160,0.25);transform:translateY(-2px);box-shadow:0 6px 22px rgba(0,0,0,0.25),0 0 15px rgba(220,200,160,0.06)}
+.proj-body{flex:1;min-width:0}
+.proj-name{font-size:14px;font-weight:600;color:var(--txt);margin-bottom:3px;line-height:1.3}
+.proj-tag{font-size:12px;color:var(--txt-dim);line-height:1.5}
+.proj-year{font-size:10.5px;color:var(--txt-faint);margin-top:5px;letter-spacing:0.06em;font-weight:500}
+.chevron{align-self:center;flex-shrink:0;color:var(--txt-faint)}
+.chevron svg{width:14px;height:14px;stroke:currentColor;stroke-width:1.8;fill:none}
+
+/* Icon tooltip */
+.icon-tooltip{position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%) translateY(8px);background:rgba(7,7,12,0.95);border:1px solid rgba(220,200,160,0.25);color:rgba(220,200,160,0.95);padding:6px 14px;border-radius:8px;font-size:11px;font-weight:500;letter-spacing:0.05em;white-space:nowrap;pointer-events:none;opacity:0;transition:opacity 0.4s,transform 0.4s;z-index:100;box-shadow:0 4px 20px rgba(0,0,0,0.4)}
+.icon-tooltip.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.icon-tooltip::after{content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);border:4px solid transparent;border-top-color:rgba(7,7,12,0.95)}
+.back-btn{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--txt-dim);padding:6px 13px;border:1px solid var(--bdr);border-radius:20px;background:var(--surface);transition:all 0.2s;margin-bottom:18px}
+.back-btn:hover{color:rgba(220,200,160,0.90);border-color:rgba(220,200,160,0.30)}
+.back-btn svg{width:12px;height:12px;stroke:currentColor;stroke-width:2;fill:none}
+.detail-icon{width:50px;height:50px;border-radius:14px;background:rgba(220,200,160,0.08);border:1px solid rgba(220,200,160,0.15);display:flex;align-items:center;justify-content:center;margin-bottom:16px}
+.detail-icon svg{width:22px;height:22px;stroke:rgba(220,200,160,0.70);stroke-width:1.5;fill:none}
+.detail-title{font-size:24px;font-weight:600;color:var(--txt);margin-bottom:5px;line-height:1.15}
+.detail-year{font-size:10px;color:var(--txt-faint);font-weight:600;letter-spacing:0.16em;text-transform:uppercase;margin-bottom:16px}
+.detail-desc{font-size:14px;color:var(--txt-dim);line-height:1.78;margin-bottom:18px}
+.tags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:20px}
+.tag{background:rgba(220,200,160,0.08);border:1px solid rgba(220,200,160,0.15);color:rgba(220,200,160,0.75);font-size:10.5px;font-weight:600;padding:4px 12px;border-radius:20px;letter-spacing:0.06em}
+.no-url{font-size:12.5px;color:var(--txt-faint);font-style:italic}
+
+/* Buttons */
+.cta-btn{display:inline-flex;align-items:center;gap:7px;background:linear-gradient(135deg,#C9A961,#B8860B);color:#1a1a1f;padding:12px 24px;border-radius:50px;font-size:13px;font-weight:600;letter-spacing:0.06em;box-shadow:0 4px 24px rgba(201,169,97,0.25);transition:filter 0.22s,transform 0.22s,box-shadow 0.22s}
+.cta-wa{background:rgba(37,211,102,0.06);border:1px solid rgba(37,211,102,0.35);color:#25D366;box-shadow:0 4px 20px rgba(37,211,102,0.10)}
+.cta-wa:hover{background:rgba(37,211,102,0.12);border-color:rgba(37,211,102,0.50);color:#25D366;box-shadow:0 6px 24px rgba(37,211,102,0.18)}
+.cta-btn svg{width:13px;height:13px;stroke:currentColor;stroke-width:2;fill:none}
+.cta-ghost{display:inline-flex;align-items:center;gap:7px;background:var(--surface);border:1px solid var(--bdr);color:var(--txt-dim);padding:12px 22px;border-radius:50px;font-size:13px;font-weight:500;transition:all 0.22s}
+.cta-ghost:hover{background:var(--surface-h);border-color:rgba(220,200,160,0.30);color:rgba(220,200,160,0.90);transform:translateY(-2px)}
+.cta-gh{background:rgba(88,166,255,0.06);border-color:rgba(88,166,255,0.35);color:rgba(139,92,246,0.90)}
+.cta-gh:hover{background:rgba(88,166,255,0.12);border-color:rgba(88,166,255,0.50);color:#A78BFA;transform:translateY(-2px)}
+.cta-ghost svg{width:13px;height:13px;stroke:currentColor;stroke-width:1.8;fill:none}
+.btn-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:4px}
+
+/* Service + contact */
+.service-card{display:flex;align-items:flex-start;gap:13px;border:1px solid var(--bdr);border-radius:13px;padding:14px;margin-bottom:8px;background:var(--surface);transition:background 0.2s,border-color 0.2s,transform 0.2s}
+.service-card:hover{background:var(--surface-h);border-color:rgba(220,200,160,0.20);transform:translateY(-1px)}
+.service-title{font-size:13.5px;font-weight:600;color:var(--txt);margin-bottom:3px}
+.service-desc{font-size:12.5px;color:var(--txt-dim);line-height:1.55}
+.contact-link{display:flex;align-items:center;gap:13px;border:1px solid var(--bdr);border-radius:13px;padding:13px 14px;margin-bottom:8px;background:var(--surface);transition:background 0.2s,border-color 0.2s,transform 0.2s}
+.contact-link:hover{background:var(--surface-h);border-color:rgba(220,200,160,0.22);transform:translateY(-2px)}
+.contact-lbl{font-size:11px;font-weight:600;color:var(--txt-faint);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:2px}
+.contact-val{font-size:13px;color:var(--txt-dim)}
+
+/* About */
+.skill-row{margin-bottom:14px}
+.skill-cat{font-size:10.5px;font-weight:600;color:rgba(220,200,160,0.65);letter-spacing:0.14em;text-transform:uppercase;margin-bottom:4px}
+.skill-list{font-size:13px;color:var(--txt-dim);line-height:1.65}
+.pills-row{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:24px}
+.stat-pill{display:inline-flex;align-items:center;gap:5px;background:var(--surface);border:1px solid var(--bdr);border-radius:20px;padding:5px 13px;font-size:11px;font-weight:600;color:var(--txt-dim)}
+.stat-pill svg{width:12px;height:12px;stroke:var(--green);stroke-width:2.5;fill:none;flex-shrink:0}
+
+/* Download CV */
+.dl-btn{position:fixed;top:18px;right:18px;z-index:50;display:inline-flex;align-items:center;gap:7px;background:var(--surface);border:1px solid var(--bdr);color:var(--txt-dim);padding:9px 16px;border-radius:50px;font-size:12px;font-weight:500;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);transition:all 0.22s;white-space:nowrap}
+.dl-btn:hover{background:rgba(220,200,160,0.10);border-color:rgba(220,200,160,0.30);color:rgba(220,200,160,0.90);transform:translateY(-2px);box-shadow:0 6px 20px rgba(220,200,160,0.08)}
+.dl-btn svg{width:13px;height:13px;stroke:currentColor;stroke-width:1.8;fill:none}
+
+/* Entrance */
+@keyframes fadeUp{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:translateY(0)}}
+.fade-1{animation:fadeUp 0.8s cubic-bezier(0.22,1,0.36,1) both}
+.fade-2{animation:fadeUp 0.8s 0.14s cubic-bezier(0.22,1,0.36,1) both}
+.fade-3{animation:fadeUp 0.8s 0.28s cubic-bezier(0.22,1,0.36,1) both}
+/* Large screen / tablet optimizations */
+@media(min-width:768px){
+  .hero{min-height:100vh;justify-content:center;padding:40px 24px}
+  .orbit-scene{margin:20px auto;transform:scale(1.15)}
+  .nav{padding-bottom:40px}
+}
+@media(min-width:1024px){
+  .hero{gap:28px}
+  .orbit-scene{margin:30px auto;transform:scale(1.35)}
+  .hero-name{font-size:clamp(40px,6vw,64px)}
+}
+@media(min-width:1400px){
+  .hero{gap:32px;padding:60px 40px}
+  .orbit-scene{transform:scale(1.55)}
+}
+@media(min-height:900px) and (min-width:1024px){
+  .hero{justify-content:center;padding-top:60px;padding-bottom:60px}
+  .orbit-scene{transform:scale(1.45)}
+}
+
+/* Profile image fix */
+.profile img{width:100%;height:100%;object-fit:cover;object-position:center center;pointer-events:none;display:block}
+
+</style>
+</head>
+<body>
+
+<canvas id="particles"></canvas>
+<div class="bg-grid"></div>
+<div class="scanlines"></div>
+<div class="noise"></div>
+
+<!-- Download CV -->
+<a href="CV/Dylan_Gorrah_Frontend_Developer.pdf" download class="dl-btn">
+  <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+  Download CV
+</a>
+
+<main class="hero">
+
+  <!-- Orbital scene -->
+  <div class="fade-1">
+    <div class="orbit-scene">
+
+      <!-- Decorative rings -->
+      <div class="orbit-ring r1"></div>
+      <div class="orbit-ring r2"></div>
+      <div class="orbit-ring r3"></div>
+
+      <!-- Inner orbit: 8 icons, clockwise -->
+      <div class="arm arm-cw" style="animation-delay:0s">       <div class="icon-chip ic-in" style="animation-delay:0s" data-tech="React" onclick="showIconName(this)">       <i class="devicon-react-original colored"></i></div></div>
+      <div class="arm arm-cw" style="animation-delay:-3.75s">   <div class="icon-chip ic-in" style="animation-delay:-3.75s" data-tech="TypeScript" onclick="showIconName(this)">   <i class="devicon-typescript-original colored"></i></div></div>
+      <div class="arm arm-cw" style="animation-delay:-7.5s">    <div class="icon-chip ic-in" style="animation-delay:-7.5s" data-tech="Tailwind" onclick="showIconName(this)">    <i class="devicon-tailwindcss-plain colored"></i></div></div>
+      <div class="arm arm-cw" style="animation-delay:-11.25s">  <div class="icon-chip ic-in" style="animation-delay:-11.25s" data-tech="Next.js" onclick="showIconName(this)">  <i class="devicon-nextjs-original"></i></div></div>
+      <div class="arm arm-cw" style="animation-delay:-15s">     <div class="icon-chip ic-in" style="animation-delay:-15s" data-tech="Node.js" onclick="showIconName(this)">     <i class="devicon-nodejs-plain colored"></i></div></div>
+      <div class="arm arm-cw" style="animation-delay:-18.75s">  <div class="icon-chip ic-in" style="animation-delay:-18.75s" data-tech="Java" onclick="showIconName(this)">  <i class="devicon-java-plain colored"></i></div></div>
+      <div class="arm arm-cw" style="animation-delay:-22.5s">   <div class="icon-chip ic-in" style="animation-delay:-22.5s" data-tech="Vite" onclick="showIconName(this)">   <svg width="22" height="22" viewBox="0 0 32 32" fill="none"><path d="M29.88 7.71L16.59 29.18a.81.81 0 01-1.39 0L2.12 7.71a2.25 2.25 0 01.26-2.45l6.32-7.08a1.1 1.1 0 011.57-.09l5.28 4.85a.81.81 0 001.09 0l5.28-4.85a1.1 1.1 0 011.57.09l6.32 7.08a2.25 2.25 0 01.27 2.45z" fill="#646CFF"/><path d="M26.93 3.45L16.59 19.08a.81.81 0 01-1.39 0L5.07 3.45a1.8 1.8 0 01-.13-.45l6.32-7.08a1.1 1.1 0 011.57-.09l5.28 4.85a.81.81 0 001.09 0l5.28-4.85a1.1 1.1 0 011.57.09l6.32 7.08a1.8 1.8 0 01-.14.45z" fill="#FFD62E"/></svg></div></div>
+      <div class="arm arm-cw" style="animation-delay:-26.25s">  <div class="icon-chip ic-in" style="animation-delay:-26.25s" data-tech=".NET" onclick="showIconName(this)">  <i class="devicon-dotnetcore-plain colored"></i></div></div>
+
+      <!-- Outer orbit: 10 icons, counter-clockwise -->
+      <div class="arm arm-ccw" style="animation-delay:0s">      <div class="icon-chip ic-out" style="animation-delay:0s" data-tech="JavaScript" onclick="showIconName(this)">      <i class="devicon-javascript-plain colored"></i></div></div>
+      <div class="arm arm-ccw" style="animation-delay:-5s">     <div class="icon-chip ic-out" style="animation-delay:-5s" data-tech="MySQL" onclick="showIconName(this)">     <i class="devicon-mysql-plain colored"></i></div></div>
+      <div class="arm arm-ccw" style="animation-delay:-10s">    <div class="icon-chip ic-out" style="animation-delay:-10s" data-tech="C#" onclick="showIconName(this)">    <i class="devicon-csharp-plain colored"></i></div></div>
+      <div class="arm arm-ccw" style="animation-delay:-15s">    <div class="icon-chip ic-out" style="animation-delay:-15s" data-tech="Git" onclick="showIconName(this)">    <i class="devicon-git-plain colored"></i></div></div>
+      <div class="arm arm-ccw" style="animation-delay:-20s">    <div class="icon-chip ic-out" style="animation-delay:-20s" data-tech="Supabase" onclick="showIconName(this)">    <svg width="18" height="18" viewBox="0 0 109 113" fill="none"><path d="M63.707 110.226c-2.457.201-4.793-.549-6.707-1.953L26.09 84.293a7.954 7.954 0 01-2.961-6.293V36.093c0-2.426 1.09-4.686 2.961-6.293L37.09 18.226l36.5-22.066a8.27 8.27 0 016.707-1.953l-1.277 4.457-4.93 16.063-14.84 9.25-30.383 19.418v40.547l30.383 19.418 14.84 9.25 4.93 16.063 1.277 4.457z" fill="#3ECF8E"/><path d="M63.707 110.226a8.27 8.27 0 006.707-1.953l30.91-22.039a8.108 8.108 0 002.961-6.293V36.093c0-2.426-1.09-4.686-2.961-6.293L70.414 7.761 37.09-3.84l36.5 22.066 11 11.797a8.108 8.108 0 012.961 6.293v40.164c0 2.426-1.09 4.686-2.961 6.293l-30.91 22.039a8.27 8.27 0 01-6.707 1.953l1.277-4.457 4.93-16.063 14.84-9.25 30.383-19.418V49.25L79.18 29.832l-14.84-9.25-4.93-16.063-1.277-4.457z" fill="#3ECF8E"/><path d="M63.707 110.226l-1.277-4.457-4.93-16.063 14.84-9.25 30.383-19.418V49.25L79.18 29.832l-14.84-9.25-4.93-16.063-1.277-4.457 1.277 4.457 4.93 16.063 14.84 9.25 30.383 19.418v40.547l-30.383 19.418-14.84 9.25-4.93 16.063-1.277 4.457z" fill="#3ECF8E"/></svg></div></div>
+      <div class="arm arm-ccw" style="animation-delay:-25s">    <div class="icon-chip ic-out" style="animation-delay:-25s" data-tech="Firebase" onclick="showIconName(this)">    <i class="devicon-firebase-plain colored"></i></div></div>
+      <div class="arm arm-ccw" style="animation-delay:-30s">    <div class="icon-chip ic-out" style="animation-delay:-30s" data-tech="Kotlin" onclick="showIconName(this)">    <i class="devicon-kotlin-plain colored"></i></div></div>
+      <div class="arm arm-ccw" style="animation-delay:-35s">    <div class="icon-chip ic-out" style="animation-delay:-35s" data-tech="SQLite" onclick="showIconName(this)">    <i class="devicon-sqlite-plain colored"></i></div></div>
+      <div class="arm arm-ccw" style="animation-delay:-40s">    <div class="icon-chip ic-out" style="animation-delay:-40s" data-tech="Android" onclick="showIconName(this)">    <i class="devicon-android-plain colored"></i></div></div>
+      <div class="arm arm-ccw" style="animation-delay:-45s">    <div class="icon-chip ic-out" style="animation-delay:-45s" data-tech="HTML5" onclick="showIconName(this)">    <i class="devicon-html5-plain colored"></i></div></div>
+
+      <!-- Profile circle -->
+      <div class="profile" id="profileBtn" onclick="openPanel('miniAbout')">
+        <!--
+          ADD YOUR PHOTO: replace the <span> below with:
+          <img src="IMG/profile.jpg" alt="Dylan Gorrah" />
+          Full setup instructions in README.md
+        -->
+        <img src="IMG/profile.png" alt="Dylan Gorrah" />
+      </div>
+    </div>
+  </div>
+
+  <!-- Name + status -->
+  <div class="fade-2">
+    <h1 class="hero-name">Dylan <em>Gorrah</em></h1>
+    <p class="hero-role">Frontend Developer &amp; Software Development Tutor</p>
+    <div style="margin-top:16px">
+      <span class="avail"><span class="avail-dot"></span>Open to new opportunities</span>
+    </div>
+  </div>
+
+  <!-- Nav buttons -->
+  <nav class="nav fade-3">
+    <button class="nav-btn" onclick="openPanel('projects')">
+      <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
+      Projects
+    </button>
+    <button class="nav-btn" onclick="openPanel('business')">
+      <svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
+      Business
+    </button>
+    <button class="nav-btn nav-btn-quick" onclick="openPanel('miniAbout')">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/></svg>
+      About
+    </button>
+  </nav>
+
+</main>
+
+<!-- Overlay + sliding panel -->
+<div class="overlay" id="overlay" onclick="handleOverlayClick(event)">
+  <div class="panel" id="panel" onclick="event.stopPropagation()">
+    <div class="drag-handle"></div>
+    <div id="panel-content"></div>
+  </div>
+</div>
+
+<script>
+// ── Particle constellation ─────────────────────────────────────────────────-
+(function(){
+  const canvas = document.getElementById('particles');
+  if(!canvas) return;
+  const ctx = canvas.getContext('2d');
+  let W, H, pts = [];
+  const mobile = window.innerWidth < 768;
+  const COUNT  = mobile ? 32 : 60;
+  const DIST   = mobile ? 95 : 135;
+
+  function resize(){ W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
+
+  function Dot(){
+    this.x  = Math.random()*W; this.y = Math.random()*H;
+    this.vx = (Math.random()-.5)*.22; this.vy = (Math.random()-.5)*.22;
+    this.r  = Math.random()*1.1+.25;
+    this.a  = Math.random()*.3+.06;
+  }
+
+  function frame(){
+    ctx.clearRect(0,0,W,H);
+    pts.forEach(p=>{
+      p.x += p.vx; p.y += p.vy;
+      if(p.x<0)p.x=W; if(p.x>W)p.x=0;
+      if(p.y<0)p.y=H; if(p.y>H)p.y=0;
+      ctx.beginPath();
+      ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+      ctx.fillStyle=`rgba(220,50,70,${p.a})`;
+      ctx.fill();
+    });
+    for(let i=0;i<pts.length;i++){
+      for(let j=i+1;j<pts.length;j++){
+        const dx=pts[i].x-pts[j].x, dy=pts[i].y-pts[j].y;
+        const d=Math.sqrt(dx*dx+dy*dy);
+        if(d<DIST){
+          ctx.beginPath();
+          ctx.moveTo(pts[i].x,pts[i].y);
+          ctx.lineTo(pts[j].x,pts[j].y);
+          ctx.strokeStyle=`rgba(220,50,70,${0.075*(1-d/DIST)})`;
+          ctx.lineWidth=.5;
+          ctx.stroke();
+        }
+      }
+    }
+    requestAnimationFrame(frame);
+  }
+
+  resize();
+  pts = Array.from({length:COUNT},()=>new Dot());
+  frame();
+  window.addEventListener('resize', resize);
+})();
+
+// ── Ambient mouse light (desktop only) ────────────────────────────────────
+if(!window.matchMedia('(hover:none)').matches && !window.matchMedia('(pointer:coarse)').matches){
+  document.addEventListener('mousemove', e=>{
+    document.body.style.setProperty('--mx', e.clientX+'px');
+    document.body.style.setProperty('--my', e.clientY+'px');
+  });
+}
+
+// ── Icon name tooltip (click/tap to show, 4s fade) ─────────────────────────
+function showIconName(el){
+  const name = el.getAttribute('data-tech');
+  if(!name) return;
+  let tooltip = el.querySelector('.icon-tooltip');
+  if(!tooltip){
+    tooltip = document.createElement('div');
+    tooltip.className = 'icon-tooltip';
+    tooltip.textContent = name;
+    el.appendChild(tooltip);
+  }
+  tooltip.classList.add('show');
+  setTimeout(() => tooltip.classList.remove('show'), 4000);
+}
+
+// ── Premium inline SVG icons (Lucide-style line art) ───────────────
+const ic = {
+  x:        `<svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8" fill="none"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>`,
+  arrow:    `<svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>`,
+  ext:      `<svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>`,
+  chevron:  `<svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8" fill="none"><polyline points="9 18 15 12 9 6"/></svg>`,
+  dl:       `<svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8" fill="none"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>`,
+  check:    `<svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" fill="none"><polyline points="20 6 9 17 4 12"/></svg>`,
+  github:   `<svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.7" fill="none"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>`,
+  linkedin: `<svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.7" fill="none"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>`,
+  phone:    `<svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.7" fill="none"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.62 3.38 2 2 0 0 1 3.59 1h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>`,
+  mail:     `<svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.7" fill="none"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>`,
+  globe:    `<svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6" fill="none"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>`,
+  seo:      `<svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6" fill="none"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>`,
+  terminal: `<svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6" fill="none"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>`,
+  zap:      `<svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6" fill="none"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>`,
+  award:    `<svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2" fill="none"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></svg>`,
+  // Project-type icons
+  bookOpen: `<svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" fill="none"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>`,
+  utensils: `<svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" fill="none"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3zm0 0v7"/></svg>`,
+  heart:    `<svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" fill="none"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>`,
+  bag:      `<svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" fill="none"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>`,
+  mapPin:   `<svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" fill="none"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>`,
+  fileText: `<svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" fill="none"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>`,
+  bot:      `<svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" fill="none"><rect x="3" y="11" width="18" height="10" rx="2"/><circle cx="12" cy="5" r="2"/><path d="M12 7v4"/><circle cx="8" cy="16" r="1" fill="currentColor"/><circle cx="16" cy="16" r="1" fill="currentColor"/></svg>`,
+};
+
+// ── All 8 projects ────────────────────────────────────────────────────────
+const projects = [
+  {
+    icon:'bookOpen',
+    name:'Java: Zero to Knowing Stuff',
+    tagline:'Beginner resource hub — learn by writing real code from day one',
+    desc:'A link tree of learning resources I built for people who are completely new to programming. The idea is to get the mindset right first, then dive straight into writing actual code — so you understand what you\'re doing instead of just copying and pasting.',
+    tech:['Java','GitHub Pages','Curriculum Design'],
+    url:'https://dylan-gorrah.github.io/Java---Zero-to-knowing-Stuff./',
+    year:'2025',
+  },
+  {
+    icon:'utensils',
+    name:'Moff.site — Masters of Fast Food',
+    tagline:'Premium local fast food, beautifully served online',
+    desc:'A modern website for a Bloemfontein restaurant specialising in local fast food with a premium twist. Showcases the menu, location, and brand story with smooth animations and a mobile-first design — built to drive foot traffic and online orders.',
+    tech:['React','Vite','Tailwind CSS','Framer Motion'],
+    url:'https://moff.site',
+    year:'2026',
+  },
+  {
+    icon:'heart',
+    name:'Comfort Funeral Services',
+    tagline:'Trust-first website for families in difficult moments',
+    desc:'A modern, compassionate website built to be fast, clear, and always reachable. 24/7 contact options are woven throughout every page so help is always one tap away. Built with Next.js 15 and smooth scroll animations.',
+    tech:['Next.js 15','TypeScript','Tailwind CSS','Framer Motion'],
+    url:'https://dylan-gorrah.github.io/Comfort-funiral-services/',
+    year:'2026',
+  },
+  {
+    icon:'bag',
+    name:'Fen & Fern Creations',
+    tagline:'Shop, customise, and order straight via WhatsApp',
+    desc:'A live e-commerce platform for a small business. Customers customise products across 6+ options and check out directly via WhatsApp, cutting order time by 85%. Delivery zones are calculated automatically using Google Maps.',
+    tech:['React','TypeScript','Vite','Tailwind CSS','WhatsApp API','Google Maps API'],
+    url:'https://fenferncreations.com/',
+    year:'2025',
+  },
+  {
+    icon:'mapPin',
+    name:'EJ Tours & Projects',
+    tagline:'Cape Town tours, booked in seconds',
+    desc:'A tourism booking site for a Cape Town operator. Browse 10+ tour packages and book straight through WhatsApp. Built for trust and conversion with Schema.org structured data, Open Graph tags, and geographic targeting for local search.',
+    tech:['HTML5','CSS3','Vanilla JS','WhatsApp API','SEO','Schema.org'],
+    url:'https://ejtoursandprojects.it.com',
+    year:'2025',
+  },
+  {
+    icon:'zap',
+    name:'Success V3: Web Studio',
+    tagline:'Premium conversion-focused marketing site',
+    desc:'A high-end marketing site for a web agency with a premium SaaS aesthetic. Features a services grid, draggable project carousel, trust badges, and WhatsApp integration with pre-filled messages so leads go straight to the right place.',
+    tech:['React 18','Vite 5','Tailwind CSS','Framer Motion'],
+    url:null,
+    year:'2026 — In Progress',
+  },
+  {
+    icon:'fileText',
+    name:'Monthly Claims System',
+    tagline:'Workflow automation for teaching contracts',
+    desc:'An internal approval tool for Rosebank College. Teaching claims flow Tutor to Coordinator to Manager to HR, with automated rule checks, role-based login, status dashboards, and one-click HR report exports.',
+    tech:['C#','ASP.NET Core 8','Entity Framework','SQLite','Bootstrap 5'],
+    url:'https://github.com/Dylan-Gorrah/CMCS--Monthy-Claims-System',
+    year:'2025',
+  },
+  {
+    icon:'bot',
+    name:'Client Support Chatbot',
+    tagline:'Automated customer service that cuts response times',
+    desc:'An interactive chatbot that answers FAQs and handles support queries automatically, cutting manual workload and response time. Features conversation session management, a predefined knowledge base, and a typing effect for a better user experience.',
+    tech:['C#','Console Application','OOP Principles','Data Structures'],
+    url:'https://github.com/Dylan-Gorrah/Chatbot',
+    year:'2024',
+  },
+];
+
+// ── Panel logic ────────────────────────────────────────────────────────────
+function openPanel(type){
+  document.getElementById('panel-content').innerHTML = renderPanel(type);
+  document.getElementById('overlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closePanel(){
+  document.getElementById('overlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+function handleOverlayClick(e){
+  if(e.target === document.getElementById('overlay')) closePanel();
+}
+document.addEventListener('keydown', e => { if(e.key === 'Escape') closePanel(); });
+
+function renderPanel(t){
+  if(t === 'projects') return renderProjects();
+  if(t === 'business') return renderBusiness();
+  if(t === 'about')    return renderAbout();
+  if(t === 'miniAbout') return renderMiniAbout();
+  return '';
+}
+
+// ── Projects list ──────────────────────────────────────────────────────────
+function renderProjects(){
+  const cards = projects.map((p, i) => `
+    <div class="project-card" onclick="showDetail(${i})">
+      <div class="icon-pill">${ic[p.icon]}</div>
+      <div class="proj-body">
+        <div class="proj-name">${p.name}</div>
+        <div class="proj-tag">${p.tagline}</div>
+        <div class="proj-year">${p.year}</div>
+      </div>
+      <div class="chevron">${ic.chevron}</div>
+    </div>`).join('');
+  return `
+    <div class="panel-header">
+      <div><p class="eyebrow">My Work</p><h2 class="panel-title">Projects</h2></div>
+      <button class="close-btn" onclick="closePanel()">${ic.x}</button>
+    </div>
+    <p class="lead">Everything I've shipped — live sites, e-commerce platforms, internal tools, and open source. Tap any card to read more.</p>
+    ${cards}`;
+}
+
+// ── Project detail ─────────────────────────────────────────────────────────
+function showDetail(i){
+  const p = projects[i];
+  const tags = p.tech.map(t => `<span class="tag">${t}</span>`).join('');
+  const isGithub = p.url && p.url.includes('github.com');
+  const cta = p.url
+    ? `<a href="${p.url}" target="_blank" rel="noopener noreferrer" class="cta-btn">${isGithub ? ic.github : ic.ext} ${isGithub ? 'View on GitHub' : 'View Live Site'}</a>`
+    : `<p class="no-url">${p.year.includes('Progress') ? 'Currently in progress' : 'Internal project — not publicly hosted'}</p>`;
+  document.getElementById('panel-content').innerHTML = `
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <button class="back-btn" onclick="openPanel('projects')">${ic.arrow} All projects</button>
+      <button class="close-btn" onclick="closePanel()">${ic.x}</button>
+    </div>
+    <div class="detail-icon">${ic[p.icon]}</div>
+    <h2 class="detail-title">${p.name}</h2>
+    <p class="detail-year">${p.year}</p>
+    <p class="detail-desc">${p.desc}</p>
+    <div class="tags">${tags}</div>
+    ${cta}`;
+}
+
+// ── Mini About (summary view from profile click) ─────────────────────────────
+function renderMiniAbout(){
+  const techStack = [
+    {name:'React', icon:'devicon-react-original colored'},
+    {name:'TypeScript', icon:'devicon-typescript-plain colored'},
+    {name:'Next.js', icon:'devicon-nextjs-original'},
+    {name:'Node.js', icon:'devicon-nodejs-plain colored'},
+    {name:'C#', icon:'devicon-csharp-plain colored'},
+    {name:'Tailwind', icon:'devicon-tailwindcss-plain colored'},
+  ];
+  return `
+    <div class="panel-header">
+      <div><p class="eyebrow">At a Glance</p><h2 class="panel-title">Dylan Gorrah</h2></div>
+      <button class="close-btn" onclick="closePanel()">${ic.x}</button>
+    </div>
+    <p class="lead" style="margin-top:10px">Frontend Developer & Tutor based in Bloemfontein, South Africa. 4+ years shipping production apps.</p>
+    <div class="pills-row" style="margin-top:14px">
+      <span class="stat-pill">${ic.award} Best Tutor 2025</span>
+      <span class="stat-pill">4+ yrs exp</span>
+      <span class="stat-pill">Open to relocate</span>
+    </div>
+    <div class="divider"></div>
+    <p class="section-lbl">Core Stack</p>
+    <div style="display:flex;flex-wrap:wrap;gap:10px;margin-bottom:18px">
+      ${techStack.map(t => `
+        <div style="display:flex;align-items:center;gap:7px;background:var(--surface);border:1px solid var(--bdr);padding:8px 14px;border-radius:8px;font-size:12px">
+          <i class="${t.icon}" style="font-size:16px"></i>
+          <span style="color:var(--txt-dim)">${t.name}</span>
+        </div>
+      `).join('')}
+    </div>
+    <div class="divider"></div>
+    <div class="btn-row">
+      <a href="https://wa.me/27677020221" target="_blank" class="cta-btn cta-wa">${ic.phone} WhatsApp</a>
+      <a href="mailto:dylangorrah3@gmail.com" class="cta-ghost">${ic.mail} Email</a>
+    </div>
+    <div style="margin-top:10px">
+      <button class="back-btn" onclick="openPanel('about')" style="margin:0">View Full About →</button>
+    </div>`;
+}
+
+// ── Business ───────────────────────────────────────────────────────────────
+function renderBusiness(){
+  const services = [
+    {k:'globe',    t:'Websites',        d:'Fast, beautiful, and built to convert. Mobile-first, always.'},
+    {k:'seo',      t:'SEO',             d:'Get found on Google. I handle the technical side so you rank.'},
+    {k:'terminal', t:'Custom Systems',  d:'Booking flows, dashboards, approval workflows — whatever you need built.'},
+    {k:'zap',      t:'App Development', d:'Web apps and mobile-ready solutions built with modern, maintainable tech.'},
+  ];
+  const contacts = [
+    {k:'phone',    href:'https://wa.me/27677020221',           l:'WhatsApp', v:'067 702 0221 — quickest response'},
+    {k:'mail',     href:'mailto:dylangorrah3@gmail.com',        l:'Email',    v:'dylangorrah3@gmail.com'},
+    {k:'github',   href:'https://github.com/Dylan-Gorrah',      l:'GitHub',   v:'github.com/Dylan-Gorrah'},
+    {k:'linkedin', href:'https://www.linkedin.com/in/dylan-gorrah-45aa07282/', l:'LinkedIn', v:'linkedin.com/in/dylan-gorrah-45aa07282'},
+  ];
+  return `
+    <div class="panel-header">
+      <div><p class="eyebrow">My Business</p><h2 class="panel-title">Digital Tech Authority</h2></div>
+      <button class="close-btn" onclick="closePanel()">${ic.x}</button>
+    </div>
+    <p class="lead" style="margin-top:10px">I help businesses get online properly — websites that convert, better search rankings, custom systems, or a full app. B2B focused and results driven.</p>
+    <div class="divider"></div>
+    <p class="section-lbl">What I do</p>
+    ${services.map(s => `<div class="service-card"><div class="icon-pill">${ic[s.k]}</div><div><div class="service-title">${s.t}</div><div class="service-desc">${s.d}</div></div></div>`).join('')}
+    <div class="divider"></div>
+    <p class="section-lbl">Get in touch</p>
+    ${contacts.map(c => `<a href="${c.href}" target="_blank" rel="noopener noreferrer" class="contact-link"><div class="icon-pill">${ic[c.k]}</div><div><div class="contact-lbl">${c.l}</div><div class="contact-val">${c.v}</div></div></a>`).join('')}`;
+}
+
+// ── About ──────────────────────────────────────────────────────────────────
+function renderAbout(){
+  const skills = [
+    {c:'Frontend', l:'React · TypeScript · Next.js · Tailwind CSS · Framer Motion · shadcn/ui · Vite'},
+    {c:'Backend',  l:'Node.js · C# (.NET) · Java · REST APIs · ASP.NET Core'},
+    {c:'Data',     l:'MySQL · SQLite · Supabase · Entity Framework'},
+    {c:'Tooling',  l:'Git · SEO · Google Maps API · WhatsApp Business API · Accessibility (a11y)'},
+  ];
+  return `
+    <div class="panel-header">
+      <div><p class="eyebrow">The Developer</p><h2 class="panel-title">About Me</h2></div>
+      <button class="close-btn" onclick="closePanel()">${ic.x}</button>
+    </div>
+    <p class="lead" style="margin-top:10px">Hey, I'm Dylan. A frontend developer based in Bloemfontein, South Africa, with 4+ years of experience and 2+ years building production apps that real people use every day — including live e-commerce platforms handling real transactions.</p>
+    <p class="lead" style="margin-top:-10px">I specialise in React and TypeScript and care a lot about how things look and feel, not just whether they work. I also tutor at Rosebank College, teaching Java, C#, and real-world dev workflows. I moved the programming module off the high-risk list by pushing the pass rate from 65% to 85%.</p>
+    <div class="pills-row">
+      <span class="stat-pill">${ic.award} Best Tutor Award 2025</span>
+      <span class="stat-pill">4+ Years Experience</span>
+      <span class="stat-pill">Open to Relocate</span>
+    </div>
+    <div class="divider"></div>
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:22px;flex-wrap:wrap">
+      <a href="CV/Dylan_Gorrah_Frontend_Developer.pdf" download class="cta-ghost">${ic.dl} Download CV</a>
+      <span class="scroll-hint">
+        <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+        Scroll for more
+      </span>
+    </div>
+    <p class="section-lbl" style="margin-top:4px">Skills</p>
+    ${skills.map(s => `<div class="skill-row"><div class="skill-cat">${s.c}</div><div class="skill-list">${s.l}</div></div>`).join('')}
+    <div class="divider"></div>
+    <div class="btn-row">
+      <a href="https://github.com/Dylan-Gorrah" target="_blank" rel="noopener" class="cta-ghost cta-gh">${ic.github} GitHub</a>
+      <a href="https://www.linkedin.com/in/dylan-gorrah-45aa07282/" target="_blank" rel="noopener" class="cta-ghost">${ic.linkedin} LinkedIn</a>
+    </div>`;
+}
+</script>
+</body>
+</html>
