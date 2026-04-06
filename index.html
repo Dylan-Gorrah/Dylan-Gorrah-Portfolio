@@ -33,27 +33,31 @@
   --green-bdr:    rgba(59,158,108,0.22);
   --cold:         rgba(100,130,200,0.12);
   --panel-bg:     rgba(7,7,10,0.98);
-  --r-in:       90px;
-  --r-out:      140px;
-  --scene:      320px;
-  --p-size:     120px;
-  --i-in:       34px;
-  --i-out:      26px;
+  --r-in:       85px;
+  --r-out:      130px;
+  --scene:      290px;
+  --p-size:     100px;
+  --i-in:       30px;
+  --i-out:      22px;
 }
 @media(min-width:768px){
-  :root{ --r-in:112px; --r-out:170px; --scene:400px; --p-size:140px; --i-in:38px; --i-out:30px; }
+  :root{ --r-in:95px; --r-out:145px; --scene:340px; --p-size:110px; --i-in:32px; --i-out:24px; }
 }
 @media(min-width:1024px){
-  :root{ --r-in:142px; --r-out:216px; --scene:510px; --p-size:172px; --i-in:44px; --i-out:34px; }
+  :root{ --r-in:105px; --r-out:160px; --scene:380px; --p-size:120px; --i-in:34px; --i-out:26px; }
 }
 
 /* ── Reset ─────────────────────────────────────────────────────── */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-html,body{height:100%;overflow-x:hidden}
-body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--txt);min-height:100vh}
+html,body{height:100%;overflow:hidden}
+body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--txt);min-height:100vh;overflow:hidden}
 a{text-decoration:none;color:inherit}
 button{font-family:'Outfit',sans-serif;cursor:pointer;border:none;background:none}
 svg{display:block;flex-shrink:0}
+
+/* Hide scrollbars */
+::-webkit-scrollbar{display:none}
+html{scrollbar-width:none;-ms-overflow-style:none}
 
 /* ── Background layers ─────────────────────────────────────────── */
 #particles{position:fixed;inset:0;z-index:0;pointer-events:none}
@@ -270,22 +274,22 @@ body::after{
 .fade-3{animation:fadeUp 0.8s 0.28s cubic-bezier(0.22,1,0.36,1) both}
 /* Large screen / tablet optimizations */
 @media(min-width:768px){
-  .hero{min-height:100vh;justify-content:center;padding:40px 24px}
-  .orbit-scene{margin:20px auto;transform:scale(1.15)}
-  .nav{padding-bottom:40px}
+  .hero{min-height:100vh;justify-content:center;padding:20px 24px;gap:16px}
+  .orbit-scene{margin:10px auto;transform:scale(0.9)}
+  .nav{padding-bottom:20px}
 }
 @media(min-width:1024px){
-  .hero{gap:28px}
-  .orbit-scene{margin:30px auto;transform:scale(1.35)}
-  .hero-name{font-size:clamp(40px,6vw,64px)}
+  .hero{gap:20px}
+  .orbit-scene{margin:15px auto;transform:scale(1.0)}
+  .hero-name{font-size:clamp(36px,4vw,52px)}
 }
 @media(min-width:1400px){
-  .hero{gap:32px;padding:60px 40px}
-  .orbit-scene{transform:scale(1.55)}
+  .hero{gap:24px;padding:30px 40px}
+  .orbit-scene{transform:scale(1.1)}
 }
 @media(min-height:900px) and (min-width:1024px){
-  .hero{justify-content:center;padding-top:60px;padding-bottom:60px}
-  .orbit-scene{transform:scale(1.45)}
+  .hero{justify-content:center;padding-top:30px;padding-bottom:30px}
+  .orbit-scene{transform:scale(1.15)}
 }
 
 /* Profile image fix */
