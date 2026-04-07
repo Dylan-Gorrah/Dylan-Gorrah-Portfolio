@@ -124,27 +124,33 @@ a{text-decoration:none;color:inherit}
 button{font-family:'Outfit',sans-serif;cursor:pointer;border:none;background:none}
 svg{display:block;flex-shrink:0}
 
-/* Hide scrollbars */
+/* Hide scrollbars & remove mobile tap highlight */
 ::-webkit-scrollbar{display:none}
 html{scrollbar-width:none;-ms-overflow-style:none}
+*{outline:none;-webkit-tap-highlight-color:transparent}
+button,a,div[onclick],.icon-chip,.project-card,.service-card,.contact-link,.nav-btn{-webkit-tap-highlight-color:transparent;touch-action:manipulation;user-select:none}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
 
 /* ── Background layers ─────────────────────────────────────────── */
-#particles{position:fixed;inset:0;z-index:0;pointer-events:none}
+#particles{position:fixed;inset:0;z-index:0;pointer-events:none;will-change:transform;content-visibility:auto;contain:strict}
 .bg-grid{
   position:fixed;inset:0;z-index:0;pointer-events:none;
   background-image:radial-gradient(circle at 1px 1px,rgba(255,255,255,0.038) 1px,transparent 0);
   background-size:38px 38px;
   mask-image:radial-gradient(ellipse at center,black 25%,transparent 68%);
   -webkit-mask-image:radial-gradient(ellipse at center,black 25%,transparent 68%);
+  will-change:transform;content-visibility:auto;contain:strict
 }
 .scanlines{
   position:fixed;inset:0;z-index:1;pointer-events:none;
   background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,0,0,0.025) 3px,rgba(0,0,0,0.025) 4px);
+  will-change:transform;content-visibility:auto;contain:strict
 }
 .noise{
   position:fixed;inset:-50%;width:200%;height:200%;z-index:1;pointer-events:none;opacity:0.038;
   background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   background-size:256px 256px;
+  will-change:transform;content-visibility:auto;contain:strict
 }
 body::after{
   content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
@@ -160,9 +166,9 @@ body::after{
 .orbit-ring.r1{width:calc(var(--r-in)*2 + 8px);height:calc(var(--r-in)*2 + 8px);box-shadow:0 0 50px var(--cold),inset 0 0 50px var(--cold);border-color:rgba(110,148,255,0.12)}
 .orbit-ring.r2{width:calc(var(--r-out)*2 + 8px);height:calc(var(--r-out)*2 + 8px);border-color:rgba(255,255,255,0.038);box-shadow:0 0 70px rgba(110,148,255,0.04)}
 .orbit-ring.r3{width:calc(var(--r-out)*2 + 70px);height:calc(var(--r-out)*2 + 70px);border-color:rgba(255,255,255,0.016)}
-.arm{position:absolute;top:50%;left:50%;width:0;height:0}
-.arm-cw {animation:spinCW  30s linear infinite}
-.arm-ccw{animation:spinCCW 50s linear infinite}
+.arm{position:absolute;top:50%;left:50%;width:0;height:0;will-change:transform}
+.arm-cw {animation:spinCW  30s linear infinite;will-change:transform}
+.arm-ccw{animation:spinCCW 50s linear infinite;will-change:transform}
 
 .icon-chip{
   position:absolute;display:flex;align-items:center;justify-content:center;border-radius:8px;
@@ -228,8 +234,11 @@ body::after{
 .nav-btn{
   display:flex;align-items:center;gap:7px;background:var(--surface);border:1px solid var(--bdr);
   color:var(--txt-dim);padding:10px 20px;border-radius:50px;font-size:13px;font-weight:500;letter-spacing:0.04em;
-  backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);white-space:nowrap;
+  white-space:nowrap;
   transition:background 0.22s,border-color 0.22s,color 0.22s,transform 0.22s,box-shadow 0.22s;
+}
+@media(min-width:768px){
+  .nav-btn{backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
 }
 .nav-btn svg{width:14px;height:14px;stroke:currentColor;stroke-width:1.8;fill:none}
 .nav-btn:hover{background:var(--highlight);border-color:var(--highlight-bdr);color:var(--txt);transform:translateY(-2px);box-shadow:0 6px 24px rgba(220,200,160,0.12),0 0 0 1px rgba(220,200,160,0.10)}
@@ -238,10 +247,12 @@ body::after{
 
 /* ── Overlay ───────────────────────────────────────────────────── */
 .overlay{
-  position:fixed;inset:0;z-index:100;background:rgba(4,4,7,0.86);
-  backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);
+  position:fixed;inset:0;z-index:100;background:rgba(4,4,7,0.95);
   display:flex;align-items:flex-end;justify-content:center;padding:0 10px 10px;
   opacity:0;pointer-events:none;transition:opacity 0.22s;
+}
+@media(min-width:768px){
+  .overlay{background:rgba(4,4,7,0.86);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px)}
 }
 .overlay.open{opacity:1;pointer-events:all}
 @media(min-width:600px){.overlay{align-items:center;padding:24px}}
@@ -333,7 +344,8 @@ body::after{
 .stat-pill svg{width:12px;height:12px;stroke:var(--green);stroke-width:2.5;fill:none;flex-shrink:0}
 
 /* Download CV */
-.dl-btn{position:fixed;top:18px;right:18px;z-index:50;display:inline-flex;align-items:center;gap:7px;background:var(--surface);border:1px solid var(--bdr);color:var(--txt-dim);padding:9px 16px;border-radius:50px;font-size:12px;font-weight:500;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);transition:all 0.22s;white-space:nowrap}
+.dl-btn{position:fixed;top:18px;right:18px;z-index:50;display:inline-flex;align-items:center;gap:7px;background:var(--surface);border:1px solid var(--bdr);color:var(--txt-dim);padding:9px 16px;border-radius:50px;font-size:12px;font-weight:500;transition:all 0.22s;white-space:nowrap}
+@media(min-width:768px){.dl-btn{backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}}
 .dl-btn:hover{background:rgba(220,200,160,0.10);border-color:rgba(220,200,160,0.30);color:rgba(220,200,160,0.90);transform:translateY(-2px);box-shadow:0 6px 20px rgba(220,200,160,0.08)}
 .dl-btn svg{width:13px;height:13px;stroke:currentColor;stroke-width:1.8;fill:none}
 
@@ -465,22 +477,38 @@ body::after{
 (function(){
   const canvas = document.getElementById('particles');
   if(!canvas) return;
+  
+  // Skip entirely on mobile/touch devices for performance
+  const isMobile = window.matchMedia('(pointer: coarse)').matches || window.innerWidth < 768;
+  if(isMobile) {
+    canvas.style.display = 'none';
+    return;
+  }
+  
   const ctx = canvas.getContext('2d');
   let W, H, pts = [];
-  const mobile = window.innerWidth < 768;
-  const COUNT  = mobile ? 32 : 60;
-  const DIST   = mobile ? 95 : 135;
+  const COUNT = 45; // Reduced from 60
+  const DIST = 135;
+  let rafId;
+  let frameCount = 0;
 
   function resize(){ W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
 
   function Dot(){
     this.x  = Math.random()*W; this.y = Math.random()*H;
-    this.vx = (Math.random()-.5)*.22; this.vy = (Math.random()-.5)*.22;
-    this.r  = Math.random()*1.1+.25;
-    this.a  = Math.random()*.3+.06;
+    this.vx = (Math.random()-.5)*.18; this.vy = (Math.random()-.5)*.18;
+    this.r  = Math.random()*.8+.2;
+    this.a  = Math.random()*.25+.05;
   }
 
   function frame(){
+    frameCount++;
+    // Render every 2nd frame (30fps instead of 60fps)
+    if(frameCount % 2 !== 0) {
+      rafId = requestAnimationFrame(frame);
+      return;
+    }
+    
     ctx.clearRect(0,0,W,H);
     pts.forEach(p=>{
       p.x += p.vx; p.y += p.vy;
@@ -491,27 +519,40 @@ body::after{
       ctx.fillStyle=`rgba(220,50,70,${p.a})`;
       ctx.fill();
     });
-    for(let i=0;i<pts.length;i++){
-      for(let j=i+1;j<pts.length;j++){
-        const dx=pts[i].x-pts[j].x, dy=pts[i].y-pts[j].y;
-        const d=Math.sqrt(dx*dx+dy*dy);
-        if(d<DIST){
-          ctx.beginPath();
-          ctx.moveTo(pts[i].x,pts[i].y);
-          ctx.lineTo(pts[j].x,pts[j].y);
-          ctx.strokeStyle=`rgba(220,50,70,${0.075*(1-d/DIST)})`;
-          ctx.lineWidth=.5;
-          ctx.stroke();
+    // Only check connections every 3rd frame
+    if(frameCount % 6 === 0) {
+      for(let i=0;i<pts.length;i++){
+        for(let j=i+1;j<pts.length;j++){
+          const dx=pts[i].x-pts[j].x, dy=pts[i].y-pts[j].y;
+          const d=Math.sqrt(dx*dx+dy*dy);
+          if(d<DIST){
+            ctx.beginPath();
+            ctx.moveTo(pts[i].x,pts[i].y);
+            ctx.lineTo(pts[j].x,pts[j].y);
+            ctx.strokeStyle=`rgba(220,50,70,${0.06*(1-d/DIST)})`;
+            ctx.lineWidth=.5;
+            ctx.stroke();
+          }
         }
       }
     }
-    requestAnimationFrame(frame);
+    rafId = requestAnimationFrame(frame);
   }
 
   resize();
   pts = Array.from({length:COUNT},()=>new Dot());
   frame();
-  window.addEventListener('resize', resize);
+  
+  // Pause when tab is hidden
+  document.addEventListener('visibilitychange', () => {
+    if(document.hidden) {
+      cancelAnimationFrame(rafId);
+    } else {
+      frame();
+    }
+  });
+  
+  window.addEventListener('resize', resize, {passive: true});
 })();
 
 // ── Ambient mouse light (desktop only) ────────────────────────────────────
